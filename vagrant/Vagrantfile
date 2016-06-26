@@ -8,12 +8,13 @@ BOX      = 'ubuntu/trusty64'
 # Cluster to join
 CLUSTER  = ENV['CONSUL_CLUSTER'] || 'default'
 
+# Env type
+TYPE     = 'vagrant'
+
 $script = <<SCRIPT
 #!/bin/bash
 
 set -ex
-
-TYPE = "vagrant"
 
 # We only need git to pull in the bootstrapping code
   sudo apt-get update
@@ -28,20 +29,19 @@ SCRIPT
 
 Vagrant.configure(2) do |config|
     
-  config.vm.define name do |machine|
-    machine.vm.box = box
+  config.vm.define "newbox" do |machine|
+    machine.vm.box = BOX
 
     machine.vm.provider "virtualbox" do |vbox|
-      vbox.gui    = gui
-      vbox.memory = ram
+      vbox.gui    = GUI
+      vbox.memory = RAM
     end
   end
-end
   # Prevents "stdin: is not a tty" on Ubuntu (https://github.com/mitchellh/vagrant/issues/1673)
-  # config.vm.provision "fix-no-tty", type: "shell" do |s|
-  #   s.privileged = false
-  #   s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
-  # end
+  config.vm.provision "fix-no-tty", type: "shell" do |s|
+    s.privileged = false
+    s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+  end
 
   config.vm.provision :shell, inline: $script
 end

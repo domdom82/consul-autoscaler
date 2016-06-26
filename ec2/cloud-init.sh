@@ -5,13 +5,13 @@ set -ex
 # This script be executed via cloud-init when the ec2 instance boots up the first time.
 
 # Get cluster name from parm
-CLUSTER = $1
+CLUSTER=$1
 
 if [[ $CLUSTER == "" ]]; then
-  CLUSTER = "default"
+  CLUSTER="default"
 fi
 
-TYPE = "ec2"
+TYPE="ec2"
 
 # We only need git to pull in the bootstrapping code
   sudo apt-get update
