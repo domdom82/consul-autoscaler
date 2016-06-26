@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -ex
 
 # Get cluster name
@@ -25,6 +24,6 @@ apt-get update
 apt-get install -y ansible
 
 # Hand over to ansible
-cd consul-autoscaler/ansible
+cd ansible
 ansible-playbook -i env/$TYPE boot.yml
 

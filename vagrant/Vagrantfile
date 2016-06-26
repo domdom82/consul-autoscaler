@@ -21,7 +21,7 @@ set -ex
   sudo apt-get install git -y
   git clone https://github.com/domdom82/consul-autoscaler.git
   cd consul-autoscaler
-  source boot.sh $CLUSTER $TYPE
+  source boot.sh #{CLUSTER} #{TYPE}
 
 SCRIPT
 
@@ -29,7 +29,7 @@ SCRIPT
 
 Vagrant.configure(2) do |config|
     
-  config.vm.define "newbox" do |machine|
+  config.vm.define CLUSTER do |machine|
     machine.vm.box = BOX
 
     machine.vm.provider "virtualbox" do |vbox|
