@@ -24,9 +24,11 @@
     repo: deb https://apt.dockerproject.org/repo ubuntu-trusty main
     update_cache: yes
     state: present
+  become: true
 
 - name: install docker
   apt:
     name: docker-engine=1.9.1-0~trusty
     state: present
-
+    force: yes
+  become: true
