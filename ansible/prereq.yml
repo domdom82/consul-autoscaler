@@ -1,0 +1,6 @@
+---
+# This playbook installs all necessary prereqs on the new VM.
+
+- hosts: localhost
+  roles:
+  - prereq

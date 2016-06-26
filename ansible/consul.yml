@@ -1,0 +1,6 @@
+---
+# This playbook starts or joins a consul cluster
+
+- hosts: localhost
+  roles:
+  - consul

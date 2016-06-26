@@ -1,0 +1,15 @@
+
+
+consul_conf_dir: /tmp/consul
+
+logs_dir: /tmp/scalerlogs
+
+
+consul:
+  port:
+    server: 8300
+    serf_lan: 8301
+    serf_wan: 8302
+    rpc: 8400
+    http: 8500
+    dns: 8600

@@ -1,0 +1,50 @@
+---
+
+- name: make consul config directory
+  file:
+    path: "{{ consul_conf_dir }}"
+    state: directory
+
+- name: write consul template
+  template:
+    src: config.json.j2
+    dest: "{{ consul_conf_dir }}/config.json"
+
+- name: start consul server/agent
+  docker:
+    name: consul
+    image: consul
+    state: started
+    command: /bin/consul agent -config-file=/consul/config/config.json 
+    restart_policy: always
+    volumes:
+      - "{{ logs_dir }}/consul:/logs"
+      - "{{ consul_conf_dir }}:/consul/config"
+    ports:
+      - "{{ consul.port.dns }}:53/udp"
+      - "{{ consul.port.http }}:8500"
+      - "{{ consul.port.rpc }}:8400"
+      - "{{ consul.port.serf_wan }}:8302"
+      - "{{ consul.port.serf_lan }}:8301"
+      - "{{ consul.port.serf_wan }}:8302/udp"
+      - "{{ consul.port.serf_lan }}:8301/udp"
+      - "{{ consul.port.server }}:8300"
+
+- name: wait until the Consul Server/Agent in this host is up and running
+  wait_for:
+    delay: 5
+    host: "{{ inventory_hostname }}"
+    port: "{{ consul.port.http }}"
+    timeout: 60
+
+- name: start registrator
+  docker:
+    name: registrator
+    hostname: registrator
+    image: gliderlabs/registrator
+    state: started
+    restart_policy: always
+    volumes:
+      - "{{ logs_dir }}/registrator:/logs"
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    command: "-ip {{ ansible_host | default(inventory_hostname) }} -resync 2 consul://{{ ansible_host | default(inventory_hostname) }}:{{ consul.port.http }}"

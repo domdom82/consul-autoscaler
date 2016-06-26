@@ -1,0 +1,47 @@
+# ---- Configuration variables ----
+GUI      = false  # Enable/Disable GUI
+RAM      = 2048   # Default memory size in MB
+
+# Default Virtualbox .box
+BOX      = 'ubuntu/trusty64'
+
+# Cluster to join
+CLUSTER  = ENV['CONSUL_CLUSTER'] || 'default'
+
+$script = <<SCRIPT
+#!/bin/bash
+
+set -ex
+
+TYPE = "vagrant"
+
+# We only need git to pull in the bootstrapping code
+  sudo apt-get update
+  sudo apt-get install git -y
+  git clone https://github.com/domdom82/consul-autoscaler.git
+  cd consul-autoscaler
+  source boot.sh $CLUSTER $TYPE
+
+SCRIPT
+
+# ---- Vagrant configuration ----
+
+Vagrant.configure(2) do |config|
+    
+  config.vm.define name do |machine|
+    machine.vm.box = box
+
+    machine.vm.provider "virtualbox" do |vbox|
+      vbox.gui    = gui
+      vbox.memory = ram
+    end
+  end
+end
+  # Prevents "stdin: is not a tty" on Ubuntu (https://github.com/mitchellh/vagrant/issues/1673)
+  # config.vm.provision "fix-no-tty", type: "shell" do |s|
+  #   s.privileged = false
+  #   s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+  # end
+
+  config.vm.provision :shell, inline: $script
+end

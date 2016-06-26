@@ -1,0 +1,1 @@
+# to be replaced with https://raw.github.com/ansible/ansible/devel/contrib/inventory/ec2.py

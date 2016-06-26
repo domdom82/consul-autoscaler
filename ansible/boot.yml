@@ -1,0 +1,5 @@
+---
+# This playbook completely bootstraps a new VM in the cluster
+
+- include: prereq.yml
+- include: consul.yml
