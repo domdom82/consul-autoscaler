@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 # Get cluster type
 TYPE=$1
@@ -21,13 +21,12 @@ hostname $HOSTNAME
 # Get docker-machine
 DOCKER_MACHINE_VERSION="v0.8.2"
 
-docker-machine --version
-
-if [[ "$?" != "0" ]]; then
+if [[ ! -f /usr/local/bin/docker-machine ]]; then
     echo "Installing docker machine version $DOCKER_MACHINE_VERSION"
     curl -L "https://github.com/docker/machine/releases/download/$DOCKER_MACHINE_VERSION/docker-machine-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-machine
     chmod +x /usr/local/bin/docker-machine
 fi
 
+docker-machine --version
 
 echo "*** BOOT FINISHED ***"
