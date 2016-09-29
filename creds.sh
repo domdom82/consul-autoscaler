@@ -4,13 +4,14 @@ set -e
 SCRIPTDIR="$(cd $(dirname "$0")/ && pwd)"
 
 TYPE=$1
-SSH_KEY=$2
-TOKEN=$3
+CLUSTER=$2
+SSH_KEY=$3
+TOKEN=$4
 
 SUPPORTED_TYPES=["digitalocean"]
 
-if [ $# -ne 3 ]; then 
-  echo "Usage: creds.sh type ssh_pub_key token"
+if [ $# -ne 4 ]; then
+  echo "Usage: creds.sh type cluster_name ssh_pub_key token"
   exit 1
 fi
 
@@ -29,3 +30,4 @@ cd $SCRIPTDIR/$TYPE/cloud-init
 cp cloud-config-template.yml cloud-config.yml
 sed -i -e "s|{{autoscaler_pub_key}}|$SSH_KEY|g" cloud-config.yml
 sed -i -e "s/{{token}}/$TOKEN/g" cloud-config.yml
+sed -i -e "s/{{cluster_name}}/$CLUSTER/g" cloud-config.yml
