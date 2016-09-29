@@ -1,3 +1,5 @@
 .vagrant
 node_modules
-
+digitalocean/tokens/docker-autoscaler
+digitalocean/cloud-init/cloud-config.yml
+digitalocean/cloud-init/cloud-config.yml-e

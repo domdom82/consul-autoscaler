@@ -1,11 +1,11 @@
 #!/bin/bash
 set -ex
 
-# Get cluster name
-CLUSTER=$1
-
 # Get cluster type
-TYPE=$2
+TYPE=$1
+
+# Get cluster name
+CLUSTER=$2
 
 echo "*** BOOTING VM OF TYPE '$TYPE' IN CLUSTER '$CLUSTER' ***"
 
@@ -17,13 +17,15 @@ HOSTNAME="$CLUSTER-$TIMESTAMP"
 echo "VM NAME: $HOSTNAME"
 hostname $HOSTNAME
 
-# Get ansible
-apt-get install -y software-properties-common
-apt-add-repository ppa:ansible/ansible
-apt-get update
-apt-get install -y ansible
 
-# Hand over to ansible
-cd ansible
-ansible-playbook -i env/$TYPE boot.yml
+# Get docker-machine
+DOCKER_MACHINE_VERSION="v0.8.2"
 
+if [[ -ne /usr/local/bin/docker-machine ]]; then
+    curl -L "https://github.com/docker/machine/releases/download/$DOCKER_MACHINE_VERSION/docker-machine-$(uname -s)-$(uname -m)" > /usr/local/bin/docker-machine
+    chmod +x /usr/local/bin/docker-machine
+fi
+
+docker-machine --version
+
+echo "*** BOOT FINISHED ***"
