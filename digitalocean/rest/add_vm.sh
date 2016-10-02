@@ -2,15 +2,22 @@
 set -e
 
 SCRIPTDIR="$(cd $(dirname "$0")/ && pwd)"
-HOSTNAME=$1
-TOKEN=$2
+CLUSTER=$1
+TOKEN="$(cat $SCRIPTDIR/../tokens/docker-autoscaler)"
 SSH_KEYS="['autoscaler-key']"
 CLOUD_INIT="$(cat $SCRIPTDIR/../cloud-init/cloud-config.yml)"
 
-if [ $# -ne 2 ]; then 
-  echo "Usage: add_vm.sh HOSTNAME TOKEN"
+if [ $# -ne 1 ]; then
+  echo "Usage: add_vm.sh CLUSTER"
   exit -1
 fi
+
+# Timestamp resolution in seconds. This should not clash as we are only going to add/remove one VM at a time.
+TIMESTAMP=$(date +%s)
+
+# Set unique hostname using cluster prefix
+HOSTNAME="$CLUSTER-$TIMESTAMP"
+echo "VM NAME: $HOSTNAME"
 
 BODY='{
     "name":"$HOSTNAME",
@@ -25,4 +32,4 @@ BODY='{
     "volumes": null}'
 
 
-curl -v -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "$BODY" "https://api.digitalocean.com/v2/droplets"
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "$BODY" "https://api.digitalocean.com/v2/droplets"

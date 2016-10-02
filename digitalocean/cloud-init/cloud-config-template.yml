@@ -3,18 +3,10 @@
 packages:
   - git
 
-users:
-  - name: autoscaler
-    groups: sudo,docker
-    shell: /bin/bash
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    ssh-authorized-keys:
-      - {{autoscaler_pub_key}}
-
 runcmd:
   - echo Fetch Autoscaler Repo
-  - cd ~autoscaler && git clone https://github.com/domdom82/docker-autoscaler.git
+  - cd ~ && git clone https://github.com/domdom82/docker-autoscaler.git
   - echo Inject Credentials
-  - cd ~autoscaler/docker-autoscaler && ./creds.sh digitalocean '{{cluster_name}}' '{{autoscaler_pub_key}}' '{{token}}'
+  - echo '{{token}}' > ~/docker-autoscaler/tokens/docker-autoscaler
   - echo Launch boot.sh
-  - cd ~autoscaler/docker-autoscaler && ./boot.sh digitalocean '{{cluster_name}}'
+  - cd ~/docker-autoscaler && ./boot.sh digitalocean
