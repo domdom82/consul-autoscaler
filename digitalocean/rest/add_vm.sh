@@ -1,8 +1,11 @@
 #!/bin/bash
+set -e
 
+SCRIPTDIR="$(cd $(dirname "$0")/ && pwd)"
 HOSTNAME=$1
 TOKEN=$2
-SSH_KEYS="['djkey']"
+SSH_KEYS="['autoscaler-key']"
+CLOUD_INIT="$(cat $SCRIPTDIR/../cloud-init/cloud-config.yml)"
 
 if [ $# -ne 2 ]; then 
   echo "Usage: add_vm.sh HOSTNAME TOKEN"
@@ -17,7 +20,7 @@ BODY='{
     "ssh_keys":$SSH_KEYS,
     "backups":false, 
     "ipv6":true,
-    "user_data":null,
+    "user_data":"$CLOUD_INIT",
     "private_networking":null,
     "volumes": null}'
 
