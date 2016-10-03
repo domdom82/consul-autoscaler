@@ -35,7 +35,7 @@ def startRegistrator():
 
 def cleanContainers():
   print "Cleaning all containers..."
-  cmd=[ '/bin/sh', 'docker', 'rm', '-f', '$(docker ps -aq)']
+  cmd=[ '/bin/sh', '-c', 'docker', 'rm', '-f', '-v', '$(docker ps -aq)']
   output = subprocess.check_output(cmd)
   return output
 
@@ -58,13 +58,13 @@ def getClusterName(hostname):
   pattern = "(\w+)-(\w+)"
   result = re.match(pattern, hostname)
   if result != None:
-    clustername = result.group(1)
+    clusterName = result.group(1)
     timestamp = result.group(2)
   return clusterName
 
 # Get all machines in this cluster
 def getCluster(clusterName):
-  cmd = [ '/bin/sh', MYDIR + '/' + TYPE + '/rest/list_vms_by_prefix.py', clusterName ]
+  cmd = [ MYDIR + '/' + TYPE + '/rest/list_vms_by_prefix.py', clusterName ]
   output = subprocess.check_output(cmd)
   instances = json.loads(output)
   return instances

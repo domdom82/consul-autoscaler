@@ -1,18 +1,20 @@
 #!/bin/bash
 set -e
 
+SCRIPTDIR="$(cd $(dirname "$0")/ && pwd)"
+
 # Get cluster type
 TYPE=$1
 
-# TBD: Get cluster name from hostname
-CLUSTER=$(hostname)
+# Get hostname
+HOST=$(hostname)
 
-echo "*** BOOTING VM OF TYPE '$TYPE' IN CLUSTER '$CLUSTER' ***"
+echo "*** BOOTING VM OF TYPE '$TYPE' ON '$HOST' ***"
 
 # Install docker
 DOCKER_VERSION="1.12.1-0~trusty"
 
-if [[ ! -f /usr/local/bin/docker ]]; then
+if [[ ! -f /usr/bin/docker ]]; then
     echo "Installing docker version $DOCKER_VERSION"
     apt-get -y install apt-transport-https ca-certificates
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
@@ -28,6 +30,8 @@ fi
 docker version
 
 # Launch boot.py
-boot.py $TYPE
+echo
+cd $SCRIPTDIR
+./boot.py $TYPE
 
 echo "*** BOOT FINISHED ***"
