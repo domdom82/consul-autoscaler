@@ -5,8 +5,8 @@ packages:
 
 runcmd:
   - echo Fetch Autoscaler Repo
-  - cd ~ && git clone https://github.com/domdom82/docker-autoscaler.git
+  - cd ~root && git clone https://github.com/domdom82/docker-autoscaler.git
   - echo Inject Credentials
-  - echo '{{token}}' > ~/docker-autoscaler/tokens/docker-autoscaler
+  - echo '{{token}}' > ~root/docker-autoscaler/digitalocean/tokens/docker-autoscaler
   - echo Launch boot.sh
-  - cd ~/docker-autoscaler && ./boot.sh digitalocean
+  - cd ~root/docker-autoscaler && ./boot.sh digitalocean
