@@ -45,7 +45,7 @@ def getHostName():
   output = output.rstrip()
   return output
 
-# Get host backend ip from SoftLayer
+# Get host ip
 def getHostIP(hostname):
   cmd = [ MYDIR + '/' + TYPE + '/rest/get_vm_ip_by_name.py', hostname ]
   output = subprocess.check_output(cmd)
