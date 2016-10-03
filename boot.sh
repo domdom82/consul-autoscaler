@@ -27,4 +27,7 @@ fi
 
 docker version
 
+# Launch boot.py
+boot.py $TYPE
+
 echo "*** BOOT FINISHED ***"

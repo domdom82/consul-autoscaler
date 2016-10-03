@@ -34,6 +34,4 @@ BODY='{
     "private_networking":null,
     "volumes": null}'
 
-echo $BODY
-
 curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "$BODY" "https://api.digitalocean.com/v2/droplets"
