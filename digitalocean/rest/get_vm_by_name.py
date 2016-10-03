@@ -7,18 +7,16 @@ import os
 import json
 import subprocess
 
-if (len(sys.argv) != 3):
-  print "Usage: get_vm_by_name token name"
+if (len(sys.argv) != 2):
+  print "Usage: get_vm_by_name name"
   exit(-1);
 
-TOKEN=sys.argv[1]
-HOSTNAME=sys.argv[2]
-
 MYDIR=os.path.abspath(os.path.dirname(sys.argv[0]))
+HOSTNAME=sys.argv[1]
 
 # Grab all VMs to get their ids
 def getAllVMs():
-  cmd = [ '/bin/sh', MYDIR + '/list_vms.sh', TOKEN ]
+  cmd = [ '/bin/sh', MYDIR + '/list_vms.sh' ]
   output = subprocess.check_output(cmd)
   vms = json.loads(output)['droplets']
   return vms
