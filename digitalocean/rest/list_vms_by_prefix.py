@@ -17,9 +17,9 @@ HOSTNAME=sys.argv[1]
 
 # Grab all VMs
 def getAllVMs():
-  cmd = [ '/bin/sh', MYDIR + '/list_vms.sh' ]
+  cmd = [ MYDIR + '/list_vms_normalized.py' ]
   output = subprocess.check_output(cmd)
-  vms = json.loads(output)['droplets']
+  vms = json.loads(output)
   return vms
 
 # get the VMs filtered by prefix
