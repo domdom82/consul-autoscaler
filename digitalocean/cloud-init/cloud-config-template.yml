@@ -2,6 +2,7 @@
 
 packages:
   - git
+  - python
 
 runcmd:
   - echo Fetch Autoscaler Repo
