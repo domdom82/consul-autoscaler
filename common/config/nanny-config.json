@@ -5,11 +5,11 @@
     {
       "type": "key",
       "key": "cluster/desiredhosts",
-      "handler": "/docker-autoscaler/nanny.py > /logs/desiredhosts_changed.log 2>&1"
+      "handler": "/docker-autoscaler/nanny.py $AUTOSCALER_TYPE > /logs/desiredhosts_changed.log 2>&1"
     },
     {
       "type": "nodes",
-      "handler": "/docker-autoscaler/nanny.py > /logs/nodes_changed.log 2>&1"
+      "handler": "/docker-autoscaler/nanny.py $AUTOSCALER_TYPE > /logs/nodes_changed.log 2>&1"
     }
   ]
 }
