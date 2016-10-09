@@ -76,7 +76,7 @@ def getKey(host, key):
     key = json.loads(output)
     value_encoded = key[0]["Value"]
     value = base64.b64decode(value_encoded)
-  except subprocess.CalledProcessError, e:
+  except (subprocess.CalledProcessError, ValueError):
     print "WARNING: Could not read key %s from Consul on host %s" % (key, host)
   return value
 
@@ -192,8 +192,7 @@ if isClusterLeader(HOSTIP):
   # Get cluster/desiredhosts
   desiredhosts = getKey(HOSTIP, "cluster/desiredhosts")
   if desiredhosts == None:
-    # TODO: instead of error, create key with default value
-    print "ERROR: Expected cluster/desiredhosts key in Consul KV."
+    print "Expected cluster/desiredhosts key in Consul KV."
     exit(2)
   desiredhosts = int(desiredhosts)
   print "cluster/desiredhosts is %s" % desiredhosts
