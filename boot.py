@@ -144,6 +144,7 @@ def joinCluster(clusterHosts):
 print "CLUSTER BOOT START\n"
 
 # Step 1. Get our own hostname and cluster name
+print "Cluster type is %s" % TYPE
 HOSTNAME=getHostName()
 print "Hostname is %s" % HOSTNAME
 HOSTIP=getHostIP(HOSTNAME)
