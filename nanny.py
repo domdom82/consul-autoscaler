@@ -17,7 +17,6 @@ import random
 MYDIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 HOSTNAME=None
 HOSTIP=None
-IMAGE="whisk-deploy-ys1-auto"
 
 if (len(sys.argv) != 2):
   print "Usage: nanny.py type"

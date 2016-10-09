@@ -29,6 +29,12 @@ fi
 
 docker version
 
+echo
+# Build consul image. Necessary for now because we need Python.
+echo "Build consul image. Necessary for now because we need Python."
+cd $SCRIPTDIR/common/docker
+docker build -t autoscaler-consul .
+
 # Launch boot.py
 echo
 cd $SCRIPTDIR

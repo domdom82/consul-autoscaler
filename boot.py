@@ -24,7 +24,7 @@ if (len(sys.argv) != 2):
 TYPE=sys.argv[1]
 
 def getBaseCmd():
-  cmd=[ 'docker', 'run', '-d', '--net', 'host','--name', 'consul', '-h', HOSTNAME, '-v', MYDIR + ':/docker-autoscaler','consul', 'agent', '-ui', '-advertise', HOSTIP, '-client=0.0.0.0', '-config-file=/docker-autoscaler/common/config/nanny-config.json' ]
+  cmd=[ 'docker', 'run', '-d', '--net', 'host','--name', 'consul', '-h', HOSTNAME, '-v', MYDIR + ':/docker-autoscaler','autoscaler-consul', 'agent', '-ui', '-advertise', HOSTIP, '-client=0.0.0.0', '-config-file=/docker-autoscaler/common/config/nanny-config.json' ]
   return cmd
 
 def startRegistrator():
