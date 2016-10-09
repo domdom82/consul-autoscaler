@@ -5,11 +5,11 @@
     {
       "type": "key",
       "key": "cluster/desiredhosts",
-      "handler": "/docker-autoscaler/nanny.sh > /logs/desiredhosts_changed.log 2>&1"
+      "handler": "/docker-autoscaler/nanny.sh"
     },
     {
       "type": "nodes",
-      "handler": "/docker-autoscaler/nanny.sh > /logs/nodes_changed.log 2>&1"
+      "handler": "/docker-autoscaler/nanny.sh"
     }
   ]
 }
