@@ -14,7 +14,7 @@ import time
 import random
 import logging
 
-logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', filename='/logs/nanny.log', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
 
 MYDIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 HOSTNAME=None
