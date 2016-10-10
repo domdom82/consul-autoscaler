@@ -2,7 +2,6 @@
 #
 # Watch script that checks if VMs need to be added or removed from the cluster.
 
-# TODO: need logging
 # TODO: import stuff from boot.py
 
 import sys
@@ -13,6 +12,9 @@ import re
 import base64
 import time
 import random
+import logging
+
+logging.basicConfig(filename='/logs/nanny.log', level=logging.INFO)
 
 MYDIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 HOSTNAME=None
@@ -55,7 +57,7 @@ def getClusterLeader(host):
   try:
     output = subprocess.check_output(cmd)
   except subprocess.CalledProcessError, e:
-    print "WARNING: Could not reach Consul on host %s" % host
+    logging.warning("WARNING: Could not reach Consul on host %s" % host)
 
   return output
 
@@ -77,7 +79,7 @@ def getKey(host, key):
     value_encoded = key[0]["Value"]
     value = base64.b64decode(value_encoded)
   except (subprocess.CalledProcessError, ValueError):
-    print "WARNING: Could not read key %s from Consul on host %s" % (key, host)
+    logging.warning("WARNING: Could not read key %s from Consul on host %s" % (key, host))
   return value
 
 # Get all nodes in this cluster
@@ -88,7 +90,7 @@ def getClusterNodes(host):
     output = subprocess.check_output(cmd)
     nodes = json.loads(output)
   except subprocess.CalledProcessError, e:
-    print "WARNING: Could not reach Consul on host %s" % host
+    logging.warning("WARNING: Could not reach Consul on host %s" % host)
   return nodes
 
 # Get all nodes that have a critical health state
@@ -100,7 +102,7 @@ def getCriticalNodes(host):
     all_nodes = json.loads(output)
     nodes = [n for n in all_nodes if n["CheckID"] == "serfHealth"]
   except subprocess.CalledProcessError, e:
-    print "WARNING: Could not reach Consul on host %s" % host
+    logging.warning("WARNING: Could not reach Consul on host %s" % host)
   return nodes
 
 # Get all nodes that have a non-critical health state
@@ -126,23 +128,23 @@ def getClusterSize(host):
 
 # Adds a new VM into this cluster
 def addVM(clusterName):
-  print "Provisioning a new host in cluster %s" % clusterName
+  logging.info("Provisioning a new host in cluster %s" % clusterName)
   cmd = [ MYDIR + '/' + TYPE + '/rest/add_vm.sh', clusterName ]
   output = None
   try:
     output = subprocess.check_output(cmd)
   except subprocess.CalledProcessError, e:
-    print "ERROR: Could not provision new host"
-    print "Exception is %s" % e
+    logging.error("ERROR: Could not provision new host")
+    logging.error("Exception is %s" % e)
 
 # Deregister a given node from the catalog
 def deregisterNode(host, node):
-  print "Deregistering node %s from catalog" % node
+  logging.info("Deregistering node %s from catalog" % node)
   cmd = [ '/bin/sh', MYDIR + '/common/rest/deregister_consul_node.sh', host, node ]
   try:
     output = subprocess.check_output(cmd)
   except subprocess.CalledProcessError, e:
-    print "WARNING: Could not reach Consul on host %s" % host
+    logging.warning("WARNING: Could not reach Consul on host %s" % host)
 
 # Remove a random VM from the cluster except self
 def removeVM(host):
@@ -152,7 +154,7 @@ def removeVM(host):
   # pick a random host to kill
   node_to_kill = random.choice(nodes)
   hostname = node_to_kill["Node"]
-  print "Removing random host %s from cluster" % hostname
+  logging.info("Removing random host %s from cluster" % hostname)
 
   cmd = [ MYDIR + '/' + TYPE + '/rest/delete_vm.sh', hostname ]
   output = None
@@ -161,8 +163,8 @@ def removeVM(host):
     # deregister node from catalog to avoid stale node entries
     deregisterNode(host, hostname)
   except subprocess.CalledProcessError, e:
-    print "ERROR: Could not remove host %s" % hostname
-    print "Exception is %s" % e
+    logging.error("ERROR: Could not remove host %s" % hostname)
+    logging.error("Exception is %s" % e)
 
 
 
@@ -170,47 +172,47 @@ def removeVM(host):
 # BEGIN MAIN PROGRAM
 ############################################
 
-print "HOSTS CHANGED START\n"
+logging.info("HOSTS CHANGED START")
 
 # Step 1. Get our own hostname and cluster name
-print "Cluster type is %s" % TYPE
+logging.info("Cluster type is %s" % TYPE)
 HOSTNAME=getHostName()
-print "Hostname is %s" % HOSTNAME
+logging.info("Hostname is %s" % HOSTNAME)
 HOSTIP=getHostIP(HOSTNAME)
-print "Host IP is %s" % HOSTIP
+logging.info("Host IP is %s" % HOSTIP)
 CLUSTERNAME=getClusterName(HOSTNAME)
 
 if CLUSTERNAME == None:
-  print "ERROR: Could not get cluster name from hostname %s" % HOSTNAME
+  logging.error("ERROR: Could not get cluster name from hostname %s" % HOSTNAME)
   exit(1)
 
-print "Cluster name is %s" % CLUSTERNAME
+logging.info("Cluster name is %s" % CLUSTERNAME)
 
 # Step 2. Am I the leader?
 if isClusterLeader(HOSTIP):
-  print "I am the cluster leader."
+  logging.info("I am the cluster leader.")
   # Get cluster/desiredhosts
   desiredhosts = getKey(HOSTIP, "cluster/desiredhosts")
   if desiredhosts == None:
-    print "Expected cluster/desiredhosts key in Consul KV."
+    logging.warning("Expected cluster/desiredhosts key in Consul KV.")
     exit(2)
   desiredhosts = int(desiredhosts)
-  print "cluster/desiredhosts is %s" % desiredhosts
+  logging.info("cluster/desiredhosts is %s" % desiredhosts)
   # Get cluster size
   actualhosts = getClusterSize(HOSTIP)
-  print "actualhosts is %s" % actualhosts
+  logging.info("actualhosts is %s" % actualhosts)
   # Need more VMs?
   if desiredhosts > actualhosts:
-    print "desiredhosts > actualhosts. Need to add a VM."
+    logging.info("desiredhosts > actualhosts. Need to add a VM.")
     addVM(CLUSTERNAME)
   # Need fewer VMs?
   elif desiredhosts < actualhosts:
-    print "desiredhosts < actualhosts. Need to remove a VM."
+    logging.info("desiredhosts < actualhosts. Need to remove a VM.")
     removeVM(HOSTIP)
   # Nothing to do
   else:
-    print "desiredhosts == actualhosts. Nothing to do."
+    logging.info("desiredhosts == actualhosts. Nothing to do.")
 else:
-  print "I am not the cluster leader. Nothing to do."
+  logging.info("I am not the cluster leader. Nothing to do.")
 
-print "\nHOSTS CHANGED END"
+logging.info("HOSTS CHANGED END")
