@@ -5,7 +5,7 @@
     {
       "type": "key",
       "key": "cluster/desiredhosts",
-      "handler": "/docker-autoscaler/nanny.sh"
+      "handler": "ls / > /tmp/ls.txt"
     },
     {
       "type": "nodes",
