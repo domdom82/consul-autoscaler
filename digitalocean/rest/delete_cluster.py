@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# List all VMs with the same prefix (=cluster) in a normalized fashion.
+# Delete an entire cluster
 
 import sys
 import os
@@ -9,11 +9,11 @@ import subprocess
 import re
 
 if (len(sys.argv) != 2):
-  print "Usage: list_vms_by_prefix prefix"
+  print "Usage: delete_cluster cluster"
   exit(-1);
 
 MYDIR=os.path.abspath(os.path.dirname(sys.argv[0]))
-HOSTNAME=sys.argv[1]
+CLUSTER=sys.argv[1]
 
 # Grab all VMs
 def getAllVMs():
@@ -35,6 +35,13 @@ def getPrefixVMs(vms, prefix):
 
   return filter(prefixFilter, vms)
 
+# delete all vms in list
+def deleteVMs(vms):
+  for vm in vms:
+    cmd = [ '/bin/sh', MYDIR + '/delete_vm.sh', vm['name']]
+    output = subprocess.check_output(cmd)
+
+
 vms = getAllVMs()
-prefix_vms = getPrefixVMs(vms, HOSTNAME)
-print json.dumps(prefix_vms)
+prefix_vms = getPrefixVMs(vms, CLUSTER)
+deleteVMs(prefix_vms)
